@@ -23,6 +23,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.github.summernecro:android:v0.0.2'
+
     compile 'org.greenrobot:eventbus:3.0.0'//消息总线处理
     compile 'com.jakewharton:butterknife:8.4.0'//注解
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'//注解
