@@ -6,7 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 
-import com.android.lib.base.interf.view.OnAppItemsClickListener;
+import com.summer.base.listener.view.OnAppItemsClickListener;
+
 
 /**
  * expandablelist适配器的基类
