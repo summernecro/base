@@ -14,7 +14,7 @@ import com.summer.base.fragment.manager.FragM;
 import com.summer.demo.databinding.ActMainBinding;
 
 
-public class MainAct extends BaseUIAct<MainUIOpe,MainDAOpe> {
+public class MainAct extends BaseUIAct<MainUIOpe,MainDAOpe,MainValue> {
 
     @Override
     protected void initNow() {

@@ -11,6 +11,7 @@ import com.summer.base.R;
 import com.summer.base.ope.BaseDAOpe;
 import com.summer.base.ope.BaseOpes;
 import com.summer.base.ope.BaseUIOpe;
+import com.summer.base.ope.BaseValue;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -22,11 +23,11 @@ import java.util.ArrayList;
 
 import butterknife.ButterKnife;
 
-public class BaseUIAct <A extends BaseUIOpe, B extends BaseDAOpe> extends AppCompatActivity {
+public class BaseUIAct <A extends BaseUIOpe, B extends BaseDAOpe,C extends BaseValue> extends AppCompatActivity {
 
     protected ViewGroup baseUIRoot;
 
-    protected BaseOpes<A, B> opes;
+    protected BaseOpes<A, B,C> opes;
 
     private String moudle;
 
@@ -60,14 +61,35 @@ public class BaseUIAct <A extends BaseUIOpe, B extends BaseDAOpe> extends AppCom
     }
 
 
-    public BaseOpes<A, B> getP() {
+    public BaseOpes<A, B,C> getP() {
         if (opes == null) {
-            opes= new BaseOpes<>(null,null);
+            opes= new BaseOpes<>(null,null,null);
+            initcc(getClass());
             initaa(getClass());
             initbb(getClass());
         }
         return opes;
     }
+
+    private void initcc(Class<?> c) {
+        if (c == null) {
+            opes.setVa((C)(new BaseValue()));
+            return;
+        }
+        if (c.getGenericSuperclass() instanceof ParameterizedType) {
+            Class<C> b = (Class<C>) ((ParameterizedType) c.getGenericSuperclass()).getActualTypeArguments()[2];
+            try {
+                Constructor<C> bc = b.getConstructor();
+                C cc = bc.newInstance();
+                opes.setVa(cc);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            initcc(c.getSuperclass());
+        }
+    }
+
 
     private void initbb(Class<?> c) {
         if (c == null) {
@@ -121,6 +143,7 @@ public class BaseUIAct <A extends BaseUIOpe, B extends BaseDAOpe> extends AppCom
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
     protected boolean registerEventBus(){
         return false;
     }
@@ -134,7 +157,7 @@ public class BaseUIAct <A extends BaseUIOpe, B extends BaseDAOpe> extends AppCom
         moudles.add(moudle);
     }
 
-    public BaseUIAct<A, B> getActivity() {
+    public BaseUIAct<A, B, C> getActivity() {
         return this;
     }
 

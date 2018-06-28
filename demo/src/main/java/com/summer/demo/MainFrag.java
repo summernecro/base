@@ -4,5 +4,5 @@ package com.summer.demo;
 
 import com.summer.base.fragment.BaseUIFrag;
 
-public class MainFrag extends BaseUIFrag<MainFragUIOpe,MainDAOpe> {
+public class MainFrag extends BaseUIFrag<MainFragUIOpe,MainDAOpe,MainValue> {
 }

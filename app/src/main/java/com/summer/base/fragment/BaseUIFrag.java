@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.summer.base.R;
 import com.summer.base.activity.BaseUIAct;
 import com.summer.base.fragment.manager.FragM;
+import com.summer.base.ope.BaseValue;
 import com.summer.base.util.HandleUtil;
 import com.summer.base.util.LogUtil;
 import com.summer.base.ope.BaseDAOpe;
@@ -29,7 +30,7 @@ import java.lang.reflect.ParameterizedType;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class BaseUIFrag<A extends BaseUIOpe, B extends BaseDAOpe> extends Fragment implements View.OnClickListener, View.OnLongClickListener{
+public class BaseUIFrag<A extends BaseUIOpe, B extends BaseDAOpe,C extends BaseValue> extends Fragment implements View.OnClickListener, View.OnLongClickListener{
 
     private BaseUIAct activity;
 
@@ -39,7 +40,7 @@ public class BaseUIFrag<A extends BaseUIOpe, B extends BaseDAOpe> extends Fragme
 
     private Unbinder unbinder;
 
-    private BaseOpes<A, B> opes;
+    private BaseOpes<A, B,C> opes;
 
     private FragIs fragIs = new FragIs();
 
@@ -61,18 +62,19 @@ public class BaseUIFrag<A extends BaseUIOpe, B extends BaseDAOpe> extends Fragme
         baseUIFrag = this;
         LogUtil.E(this.getClass());
         setArguments(new Bundle());
-        opes = new BaseOpes<>(null, null);
+        opes = new BaseOpes<>(null, null,null);
+        initcc(getClass());
         initbb(getClass());
         getP().getD().initDA();
     }
 
 
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        uniqueid = System.currentTimeMillis();
-        frag = this;
         if(is注册事件总线()){
             EventBus.getDefault().register(this);
         }
@@ -99,7 +101,7 @@ public class BaseUIFrag<A extends BaseUIOpe, B extends BaseDAOpe> extends Fragme
     public void onViewCreated(final View view, @Nullable final Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         unbinder = ButterKnife.bind(this, view);
-        initNow();
+
         HandleUtil.getInstance().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -109,7 +111,7 @@ public class BaseUIFrag<A extends BaseUIOpe, B extends BaseDAOpe> extends Fragme
                 getP().getU().setView(getView());
                 getP().getU().initUI();
                 unbinder = ButterKnife.bind(baseUIFrag, baseUIRoot);
-                initdelay();
+                initNow();
             }
         }, delayTime());
         fragIs.onViewCreated(view,savedInstanceState);
@@ -170,8 +172,27 @@ public class BaseUIFrag<A extends BaseUIOpe, B extends BaseDAOpe> extends Fragme
     /**
      * 获取操作类
      */
-    public BaseOpes<A, B> getP() {
+    public BaseOpes<A, B,C> getP() {
         return opes;
+    }
+
+    private void initcc(Class<?> c) {
+        if (c == null) {
+            opes.setVa((C)(new BaseValue()));
+            return;
+        }
+        if (c.getGenericSuperclass() instanceof ParameterizedType) {
+            Class<C> b = (Class<C>) ((ParameterizedType) c.getGenericSuperclass()).getActualTypeArguments()[2];
+            try {
+                Constructor<C> bc = b.getConstructor();
+                C cc = bc.newInstance();
+                opes.setVa(cc);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            initcc(c.getSuperclass());
+        }
     }
 
     private void initbb(Class<?> c) {
